@@ -1,0 +1,716 @@
+﻿@model URUNTAKIPMVC.Models.MultiView
+@{
+    ViewBag.Title = "AnaSayfa";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@{
+    string isimmm = "";
+}
+<script type="text/javascript">
+
+    var urunn = 0;
+    var kulid = 0;
+    var durumid = 0;
+    var kateid = 0;
+    var isimid = 1;
+
+
+
+    function urunGuncelle(urunID) {
+
+        urunn = urunID;
+        $.ajax({
+            url: '/Admin/UrunDetay',
+            type: 'Post',
+            dataType: 'json',
+            data: { id: urunn },
+            success: function (data) {
+                var marka = data.Result.Marka;
+                var model = data.Result.Model;
+                var serino = data.Result.SeriNo;
+                durumid = data.Result.DurumID;
+                kateid = data.Result.KategoriID;
+                var fiyat = data.Result.Fiyat;
+                var atandiMi = data.Result.atanMi;
+                var notlar = data.Result.notlar;
+                $("#marka").val(marka);
+                $("#model").val(model);
+                $("#serino").val(serino);
+                $("#durum").val(durumid);
+                $("#kategori").val(kateid);
+                $("#fiyat").val(fiyat);
+                $("#atandiMi").val(atandiMi);
+                $("#notlar").val(notlar);
+            },
+            error: function (data) {
+                alert("aaa");
+            }
+        });
+    }
+
+    $(document).ready(function () {
+
+        //$("#isim").change(function () {
+        //    kulid = $(this).children(":selected").attr("value");
+        //});
+
+        $("#durum").change(function () {
+            durumid = $(this).children(":selected").attr("value");
+        });
+
+        $("#kategori").change(function () {
+            kateid = $(this).children(":selected").attr("value");
+        });
+        $('#modalurunguncelle').click(function () {
+            var urun = {
+                ID: urunn,
+                marka: $("#marka").val(),
+                model: $("#model").val(),
+                SeriNo: $("#serino").val(),
+                DurumID: durumid,
+                KategoriID: kateid,
+                Fiyat: $("#fiyat").val(),
+                Notlar: $("#notlar").val()
+            }
+            if (urunn > 0) {
+                $.ajax({
+                    url: "/admin/urunguncelle",
+                    type: "Post",
+                    datatype: "json",
+                    data: urun,
+                    success: function (data) {
+                        window.location.reload();
+                    }
+                })
+            }
+            else {
+                App.alert({
+                    container: $('#alert_container').val(), // alerts parent container place: 'append', // append or prepent in container type: 'success', // alert's type message: 'Test alert', // alert's message
+                    close: true, // make alert closable reset: false, // close all previouse alerts first focus: true, // auto scroll to the alert after shown closeInSeconds: 10000, // auto close after defined seconds
+                    icon: 'fa fa-check' // put icon class before the message });
+                })
+
+            };
+        });
+    });
+    function urunata(idiurun, kullaniciID, drmid) {
+        urunn = idiurun;
+        if (kullaniciID != 1 || drmid != 2) {
+            alert("Ürün atanmış veya kullanım Dışı!");
+        }
+        else {
+            $('#staticatama').modal('toggle');
+
+        }
+    }
+
+    $(document).ready(function () {
+        $("#isimsl").change(function () {
+            isimid = $(this).children(":selected").attr("value");
+        });
+
+        $("#modalurunata").click(function () {
+            $.ajax({
+                url: '/Admin/Atama',
+                type: 'Post',
+                datatype: 'json',
+                data: { id: urunn, idisim: isimid },
+
+                success: function (data) {
+                    if (data == "urunbos") {
+                        alert("something going wrong!");
+                    }
+                    else if (data == "atanmadi") {
+                        alert("atama seçeneği boş seçilemez");
+                    }
+                    else if (data == "atandi") {
+                        $("#durum").prop("readonly", true);
+                        alert("PDF için Kullanıcılara gidiniz!");
+                    }
+                    //else if (data == "atandi") {
+                    //    $("#durum").prop("readonly", true);
+                    //    window.location.href = "/admin/PrintPDF/" + isimid + "," + urunn;
+                    //}
+
+                },
+                complete: function () {
+
+                    setTimeout(function () {
+                        window.location.reload(1);
+                    }, 1000);
+                },
+
+                error: function () {
+                    alert("sadfads");
+                }
+            })
+        })
+    })
+
+
+    function urunSil(urunid) {
+        $('#silurun').click(function () {
+            if (urunid > 0) {
+                $.ajax({
+                    url: "/admin/silurun",
+                    type: "Post",
+                    datatype: "json",
+                    data: { id: urunid },
+                    success: function (data) {
+
+                        window.location.reload();
+                    }
+                })
+            }
+        })
+    }
+
+    function GeriAl(uid, kid) {
+
+        if (kid > 1) {
+            $('#myModal3').modal('toggle');
+            $("#modalgerial").click(function () {
+                $.ajax({
+                    url: "/admin/gerial",
+                    type: "Post",
+                    datatype: "json",
+                    data: { id: uid, kuid: kid },
+                    success: function (data) {
+                        $("#descrip").prop("readonly", false);
+                        window.location.reload();
+                    }
+                })
+            })
+        }
+        else if (kid == 1) {
+            alert("Atanmayan Ürün!");
+        }
+    }
+
+
+
+
+</script>
+@*<script>
+        $(document).ready(function () {
+            // Setup - add a text input to each footer cell
+            $('#sample_1 tfoot th').each(function () {
+                var title = $(this).text();
+                $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+            });
+
+            // DataTable
+            var table = $('#sample_1').DataTable({
+                initComplete: function () {
+                    // Apply the search
+                    this.api()
+                        .columns()
+                        .every(function () {
+                            var that = this;
+
+                            $('input', this.footer()).on('keyup change clear', function () {
+                                if (that.search() !== this.value) {
+                                    that.search(this.value).draw();
+                                }
+                            });
+                        });
+                },
+            });
+        });
+    </script>*@
+
+
+<div id="myModal1" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" style="display: none;">
+
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+            <h4 class="modal-title">Uyarı!</h4>
+        </div>
+        <div class="modal-body">
+            <p> Ürünü güncellemek istediğinize emin misiniz? </p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn default" data-dismiss="modal" aria-hidden="true">Hayır</button>
+            <button id="modalurunguncelle" class="btn yellow">Evet</button>
+        </div>
+    </div>
+</div>
+<div id="myModal2" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" style="display: none;">
+
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+            <h4 class="modal-title">Uyarı!</h4>
+        </div>
+        <div class="modal-body">
+            <p> Ürünü Atamak istediğinize emin misiniz? </p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn default" data-dismiss="modal" aria-hidden="true">Hayır</button>
+            <button id="modalurunata" class="btn yellow">Evet</button>
+        </div>
+    </div>
+</div>
+<div id="myModal3" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" style="display: none;">
+
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+            <h4 class="modal-title">Uyarı!</h4>
+        </div>
+        <div class="modal-body">
+            <p> Ürünü @isimmm Kullanıcıdan almak istediğinize emin misiniz? </p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn default" data-dismiss="modal" aria-hidden="true">Hayır</button>
+            <button id="modalgerial" class="btn yellow">Evet</button>
+        </div>
+    </div>
+</div>
+<div id="urunsilmemodalı" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" style="display: none;">
+
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+            <h4 class="modal-title">Uyarı!</h4>
+        </div>
+        <div class="modal-body">
+            <p> Ürünü Silmek istediğinize emin misiniz? </p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn default" data-dismiss="modal" aria-hidden="true">Hayır</button>
+            <button id="silurun" class="btn yellow">Evet</button>
+        </div>
+    </div>
+</div>
+<div id="static" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false" data-width="40%">
+
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+            <h4 class="modal-title"></h4>
+        </div>
+        <div class="modal-body">
+            <div class="portlet-title text-center">
+                <div class="caption font-red-sunglo">
+                    <i class="icon-settings font-red-sunglo"></i>
+                    <span class="caption-subject bold uppercase">Urun Güncelleme</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="portlet light bordered">
+                        <div class="portlet-body form">
+                            <form role="form">
+                                <div class="form-body">
+
+                                    <div class="form-group form-md-line-input display-none">
+                                        <input type="text" class="form-control" id="isim" readonly>
+                                        <label for="isim">İsim Soyisim</label>
+                                        <span class="help-block">Kullanıcı adı SOyadı</span>
+                                    </div>
+                                    <div class="form-group form-md-line-input">
+                                        <input type="text" class="form-control" id="marka">
+                                        <label for="marka">Marka</label>
+                                        <span class="help-block">Marka bilgileri</span>
+                                    </div>
+                                    <div class="form-group form-md-line-input">
+                                        <input type="text" class="form-control" id="model">
+                                        <label for="model">Model</label>
+                                        <span class="help-block">Model Bilgileri</span>
+                                    </div>
+                                    <div class="form-group form-md-line-input">
+                                        <input type="number" class="form-control" id="serino">
+                                        <label for="serino">SeriNo</label>
+                                        <span class="help-block">SeriNo Bilisi</span>
+                                    </div>
+                                    <div class="form-group form-md-line-input">
+                                        <input type="number" class="form-control" id="fiyat">
+                                        <label for="fiyat">Fiyat</label>
+                                        <span class="help-block">Fiyat Bilisi</span>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="portlet light bordered">
+                        <div class="portlet-body form">
+                            <form role="form">
+                                <div class="form-body">
+                                    <div class="form-group form-md-line-input">
+                                        <select class="form-control" id="durum">
+                                            @foreach (var item in Model.Durumlist)
+                                            {
+                                                <option selected value="@item.ID">@item.DurumAdı</option>
+                                            }
+                                        </select>
+                                        <label for="form_control_1">Ürün Durumu</label>
+                                    </div>
+
+                                    <div class="form-group form-md-line-input">
+                                        <select class="form-control" id="kategori">
+
+                                            @foreach (var item in Model.KategoriList)
+                                            {
+                                                <option selected value="@item.ID">@item.KategoriAdı</option>
+                                            }
+                                        </select>
+                                        <label for="form_control_1">Kategoriler</label>
+                                    </div>
+
+                                    <div class="form-group form-md-line-input display-none">
+                                        <input type="text" class="form-control" id="verilentarih" readonly>
+                                        <label for="verilentarih">Verilen Tarih</label>
+                                        <span class="help-block">Verilen tarih bilgisi</span>
+                                    </div>
+
+                                    <div class="form-group form-md-line-input display-none">
+                                        <input type="text" class="form-control" id="alinantarih" readonly>
+                                        <label for="alinantarih">Alınan Tarih</label>
+                                        <span class="help-block">Alınan Tarih bilgisi</span>
+                                    </div>
+                                    <div class="form-group form-md-line-input">
+                                        <input type="text" class="form-control" id="atandiMi" readonly>
+                                        <label for="atandiMi">atandı mı</label>
+                                        <span class="help-block">Atandı mi Bilgisi</span>
+                                    </div>
+                                    <div class="form-group form-md-line-input">
+                                        <textarea maxlength="150" id="notlar" class="form-control" placeholder="Notlarınızı Giriniz" style="resize:none;"></textarea>
+                                        <label for="notlar">Notlarınızı Giriniz</label>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" data-dismiss="modal" class="btn btn-outline dark">Kapat</button>
+                    <a href="#myModal1" class="btn green" data-toggle="modal">Güncelle</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="staticatama" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false" data-width="20%">
+
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+            <h4 class="modal-title"></h4>
+        </div>
+        <div class="modal-body">
+            <div class="portlet-title text-center">
+                <div class="caption font-red-sunglo">
+                    <i class="icon-settings font-red-sunglo"></i>
+                    <span class="caption-subject bold uppercase">Urun Güncelleme</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="portlet light bordered">
+                        <div class="portlet-body form">
+                            <form role="form">
+                                <div class="form-body">
+                                    <div class="form-group form-md-line-input">
+                                        <select class="form-control" id="isimsl">
+                                            @foreach (var item in Model.KullaniciList)
+                                            {
+                                                <option value="@item.ID">@item.AdiSoyadi</option>
+                                            }
+                                        </select>
+                                        <label for="isim">Ürün Kimde?</label>
+                                    </div>
+
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" data-dismiss="modal" class="btn btn-outline dark">Kapat</button>
+                    <a href="#myModal2" class="btn green" data-toggle="modal">Ata</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="portlet light bordered">
+            <div class="portlet-title">
+                <div class="caption font-dark">
+                    <i class="icon-settings font-dark"></i>
+                    <span class="caption-subject bold uppercase">Ürünler Tablosu</span>
+                </div>
+
+            </div>
+            <div class="portlet-body">
+                <div class="table-toolbar">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="btn-group">
+                                <a href="/admin/YeniUrunEkle" id="sample_editable_3_new" class="btn sbold green">
+                                    Yeni Ürün Ekle
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div id="sample_3_wrapper" class="dataTables_wrapper no-footer">
+                    <table class="table table-striped table-bordered table-hover dataTable no-footer dtr-inline" id="sample_3" role="grid" aria-describedby="sample_3_info">
+                        <thead>
+                            <tr class="text-center">
+
+                                <th style="display:none" width="25%"> Kullanıcı Adı </th>
+                                <th> Kullanıcı Adı </th>
+                                <th> Marka </th>
+                                <th> Model </th>
+                                <th> SeriNo </th>
+                                <th> Durum </th>
+                                <th> Kategori </th>
+                                <th> Fiyat </th>
+                                <th> Verilen Tarih </th>
+                                <th> Alınan Tarih </th>
+                                <th> Notlar </th>
+                                <th> Atandı Mı </th>
+                                <th> Seçenekler </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.UrunList)
+                            {
+
+                                isimmm = item.Kullanici.AdiSoyadi;
+                                if (item.KullaniciID == 1)
+                                {
+                                    <tr class="gradeX odd text-center" role="row">
+
+                                        <td style="display:none" width="25%">@item.Adet</td>
+                                        <td class=""><strong>___</strong></td>
+                                        <td class=""><strong>@item.Marka</strong></td>
+                                        <td class=""><strong>@item.Model</strong></td>
+                                        <td class=""><strong>@item.SeriNo</strong></td>
+                                        <td class=""><strong>@item.Durum.DurumAdı</strong></td>
+                                        <td class=""><strong>@item.Kategori.KategoriAdı</strong></td>
+                                        <td class=""><strong>@item.Fiyat</strong></td>
+                                        <td class="">
+                                            <strong>
+                                                @{
+
+                                                    var verilenn = (DateTime)item.VerilenTarih;
+                                                    if (verilenn != null)
+                                                    {
+                                                        <span>@verilenn.ToShortDateString()</span>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>Verilmedi</span>
+                                                    }
+                                                }
+                                            </strong>
+                                        </td>
+                                        <td class="">
+                                            <strong>
+                                                @{
+                                                    var alinan = (DateTime)item.AlinanTarih;
+                                                    if (alinan != null)
+                                                    {
+                                                        <span>@alinan.ToShortDateString()</span>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>Alınmadı</span>
+                                                    }
+                                                }
+                                            </strong>
+                                        </td>
+                                        <td ><strong>@item.notlar</strong></td>
+                                        <td >
+                                            @{
+                                                int durumm = item.DurumID;
+                                                bool atandimiii = @item.atandiMi;
+                                            }
+                                            @if (item.atandiMi)
+                                            {<inpu class="icheckbox_flat green" type="checkbox" checked disabled />}
+                                            else
+                                            {<input class="icheckbox_flat green" type="checkbox" disabled />}
+
+                                        </td>
+                                        <td class="text-warning">
+                                            <div style="display:flex; justify-content:space-around">
+                                                <a href="#static" data-toggle="modal" onclick="urunGuncelle(@item.ID)" class="btn btn-circle green btn-outline">Güncelle</a>
+                                                @{
+                                                    if (atandimiii == true && durumm == 2)
+                                                    {
+                                                        <a onclick="urunata(@item.ID, @item.KullaniciID,@item.DurumID)" class="btn btn-circle purple btn-outline display-none">ATA</a>
+                                                        <a onclick="GeriAl(@item.ID, @item.KullaniciID)" class="btn btn-circle blue btn-outline">Al</a>
+                                                    }
+                                                    else if (atandimiii == false && durumm == 2)
+                                                    {
+                                                        <a onclick="GeriAl(@item.ID, @item.KullaniciID)" class="btn btn-circle blue btn-outline display-none">Al</a>
+                                                        <a onclick="urunata(@item.ID, @item.KullaniciID,@item.DurumID)" class="btn btn-circle purple btn-outline ">ATA</a>
+
+                                                    }
+                                                    else if (durumm == 3)
+                                                    {
+                                                        <a onclick="GeriAl(@item.ID, @item.KullaniciID)" class="btn btn-circle blue btn-outline display-none">Al</a>
+                                                        <a onclick="urunata(@item.ID, @item.KullaniciID,@item.DurumID)" class="btn btn-circle purple btn-outline display-none">ATA</a>
+
+                                                    }
+                                                }
+
+                                                <a href="/admin/urungecmis/@item.ID" class="btn btn-circle dark btn-outline">Geçmiş</a>
+                                                @{
+                                                    if (item.KullaniciID != 1)
+                                                    {
+                                                        <a href="#urunsilmemodalı" data-toggle="modal" onclick="urunSil(@item.ID)" class="btn btn-circle red btn-outline disabled" style="cursor: not-allowed !important;">Sil</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="#urunsilmemodalı" data-toggle="modal" onclick="urunSil(@item.ID)" class="btn btn-circle red btn-outline">Sil</a>
+
+                                                    }
+                                                }
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    <tr class="gradeX odd text-center" role="row">
+
+                                        <td style="display:none" width="25%">@item.Adet</td>
+                                        <td>@item.Kullanici.AdiSoyadi</td>
+                                        <td>@item.Marka</td>
+                                        <td>@item.Model</td>
+                                        <td>@item.SeriNo</td>
+                                        <td>@item.Durum.DurumAdı</td>
+                                        <td>@item.Kategori.KategoriAdı</td>
+                                        <td>@item.Fiyat</td>
+                                        <td>
+                                            @{
+
+                                                var verilenn = (DateTime)item.VerilenTarih;
+                                                if (verilenn != null)
+                                                {
+                                                    <span>@item.VerilenTarih.ToShortDateString()</span>
+
+                                                }
+                                                else
+                                                {
+                                                    <span>Verilmedi</span>
+                                                }
+                                            }
+                                        </td>
+                                        <td>
+                                            @{
+                                                var alinan = (DateTime)item.AlinanTarih;
+                                                if (alinan != null)
+                                                {
+                                                    <span>@item.AlinanTarih.ToShortDateString()</span>
+
+                                                }
+                                                else
+                                                {
+                                                    <span>Alınmadı</span>
+                                                }
+                                            }
+                                        </td>
+                                        <td>@item.notlar</td>
+                                        <td>
+                                            @{
+                                                int durumm = item.DurumID;
+                                                bool atandimiii = @item.atandiMi;
+                                            }
+                                            @if (item.atandiMi)
+                                            {<input class="icheckbox_flat green" type="checkbox" checked disabled />}
+                                            else
+                                            {<input class="icheckbox_flat green" type="checkbox" disabled />}
+
+                                        </td>
+                                        <td>
+                                            <div style="display:flex; justify-content:space-around">
+                                                <a href="#static" data-toggle="modal" onclick="urunGuncelle(@item.ID)" class="btn btn-circle green btn-outline">Güncelle</a>
+                                                @{
+                                                    if (atandimiii == true && durumm == 2)
+                                                    {
+                                                        <a onclick="urunata(@item.ID, @item.KullaniciID,@item.DurumID)" class="btn btn-circle purple btn-outline display-none">ATA</a>
+                                                        <a onclick="GeriAl(@item.ID, @item.KullaniciID)" class="btn btn-circle blue btn-outline">Al</a>
+                                                    }
+                                                    else if (atandimiii == false && durumm == 2)
+                                                    {
+                                                        <a onclick="GeriAl(@item.ID, @item.KullaniciID)" class="btn btn-circle blue btn-outline display-none">Al</a>
+                                                        <a onclick="urunata(@item.ID, @item.KullaniciID,@item.DurumID)" class="btn btn-circle purple btn-outline ">ATA</a>
+
+                                                    }
+                                                    else if (durumm == 3)
+                                                    {
+                                                        <a onclick="GeriAl(@item.ID, @item.KullaniciID)" class="btn btn-circle blue btn-outline display-none">Al</a>
+                                                        <a onclick="urunata(@item.ID, @item.KullaniciID,@item.DurumID)" class="btn btn-circle purple btn-outline display-none">ATA</a>
+
+                                                    }
+                                                }
+
+                                                <a href="/admin/urungecmis/@item.ID" class="btn btn-circle dark btn-outline">Geçmiş</a>
+                                                @{
+                                                    if (item.KullaniciID != 1)
+                                                    {
+                                                        <a href="#urunsilmemodalı" data-toggle="modal" onclick="urunSil(@item.ID)" class="btn btn-circle red btn-outline disabled" style="cursor: not-allowed !important;">Sil</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="#urunsilmemodalı" data-toggle="modal" onclick="urunSil(@item.ID)" class="btn btn-circle red btn-outline">Sil</a>
+
+                                                    }
+                                                }
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+
+                            }
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- END EXAMPLE TABLE PORTLET-->
+    </div>
+</div>
+@*<div class="form-group form-md-line-input">
+        <input type="text" class="form-control" id="isim" readonly>
+        <label for="isim">İsim Soyisim</label>
+        <span class="help-block">Kullanıcı adı SOyadı</span>
+    </div>*@
+@*<p>
+    <div class="input-group date" data-provide="datepicker">
+        <div class="input-group-addon">
+            <span class="icon-calendar"></span>
+        </div>
+        <input type="text" class="form-control" id="alinantarih">
+
+    </div>
+*@
+@*<p>
+
+    <label>Verilen Tarih</label>
+            <div class="input-group date" data-provide="datepicker">
+                <div class="input-group-addon">
+                    <span class="icon-calendar"></span>
+                </div>
+                <input type="text" class="form-control" id="verilentarih">
+
+            </div>
+        </p>*@

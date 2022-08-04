@@ -1,0 +1,383 @@
+﻿@model URUNTAKIPMVC.Models.MultiView
+@{
+    ViewBag.Title = "KateBirim";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<script type="text/javascript">
+    var kid = 1;
+    function katGuncelle(katid) {
+
+        kid = katid;
+
+        $.ajax({
+            url: '/kabi/katDetay',
+            type: 'Post',
+            dataType: 'json',
+            data: { id: kid },
+            success: function (data) {
+                var isim = data.Result.KategoriAdı;
+                $("#name").val(isim);
+            },
+            error: function (data) {
+                alert("aaa");
+            }
+        });
+    }
+
+    $(document).ready(function () {
+
+        $('#modalkatgunc').click(function () {
+            var kate = {
+                ID: kid,
+                KategoriAdı: $("#name").val(),
+            }
+            if (kid > 0) {
+                $.ajax({
+                    url: "/kabi/kategoriguncelle",
+                    type: "Post",
+                    datatype: "json",
+                    data: kate,
+                    success: function (data) {
+                        if (data == true) {
+                            window.location.reload();
+                        }
+                        else if (data == "Boş") {
+                            alert("Boş kategorisi değiştirelemez!");
+                        }
+                    }
+                })
+            }
+            else {
+                App.alert({
+                    container: $('#alert_container').val(), // alerts parent container place: 'append', // append or prepent in container type: 'success', // alert's type message: 'Test alert', // alert's message
+                    close: true, // make alert closable reset: false, // close all previouse alerts first focus: true, // auto scroll to the alert after shown closeInSeconds: 10000, // auto close after defined seconds
+                    icon: 'fa fa-check' // put icon class before the message });
+                })
+
+            };
+        });
+    });
+
+    function katSil(katid) {
+        $('#silkul').click(function () {
+            if (katid > 0) {
+                $.ajax({
+                    url: "/kabi/silkat",
+                    type: "Post",
+                    datatype: "json",
+                    data: { id: katid },
+                    success: function (data) {
+                        if (data == "Var") {
+                            alert("Bu kategoriye ait ürün olduğu için silinemez");
+                        }
+                        else if (data == "Boş") {
+                            alert("Boş kategorisi silinemez");
+                        }
+                        else {
+                            window.location.reload();
+                        }
+                    }
+                })
+            }
+        })
+    }
+</script>
+
+<script type="text/javascript">
+    var bid = 1;
+    function birimGuncelle(birimid) {
+
+        bid = birimid;
+
+        $.ajax({
+            url: '/kabi/birimDetay',
+            type: 'Post',
+            dataType: 'json',
+            data: { id: bid },
+            success: function (data) {
+                var isim = data.Result.BirimAdı;
+                $("#birim").val(isim);
+            },
+            error: function (data) {
+                alert("aaa");
+            }
+        });
+    }
+
+    $(document).ready(function () {
+
+        $('#modalbirimgunc').click(function () {
+            var birim = {
+                ID: bid,
+                BirimAdı: $("#birim").val(),
+            }
+            if (bid > 0) {
+                $.ajax({
+                    url: "/kabi/birimguncelle",
+                    type: "Post",
+                    datatype: "json",
+                    data: birim,
+                    success: function (data) {
+                        if (data == true) {
+                            window.location.reload();
+                        }
+                        else if (data == "Boş") {
+                            alert("Boş kategorisi değiştirelemez!");
+                        }
+                    }
+                })
+            }
+            else {
+                App.alert({
+                    container: $('#alert_container').val(), // alerts parent container place: 'append', // append or prepent in container type: 'success', // alert's type message: 'Test alert', // alert's message
+                    close: true, // make alert closable reset: false, // close all previouse alerts first focus: true, // auto scroll to the alert after shown closeInSeconds: 10000, // auto close after defined seconds
+                    icon: 'fa fa-check' // put icon class before the message });
+                })
+
+            };
+        });
+    });
+
+    function birimSil(birimid) {
+        $('#silbirim').click(function () {
+            if (birimid > 0) {
+                $.ajax({
+                    url: "/kabi/silbirim",
+                    type: "Post",
+                    datatype: "json",
+                    data: { id: birimid },
+                    success: function (data) {
+                        if (data == "Var") {
+                            alert("Bu kategoriye ait ürün olduğu için silinemez");
+                        }
+                        else if (data == "Boş") {
+                            alert("Boş kategorisi silinemez");
+                        }
+                        else {
+                            window.location.reload();
+                        }
+                    }
+                })
+            }
+        })
+    }
+</script>
+<div id="staticatama" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false" data-width="20%">
+
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+            <h4 class="modal-title"></h4>
+        </div>
+        <div class="modal-body">
+            <div class="portlet-title text-center">
+                <div class="caption font-red-sunglo">
+                    <i class="icon-settings font-red-sunglo"></i>
+                    <span class="caption-subject bold uppercase">Kategori Güncelleme</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="portlet light bordered">
+                        <div class="portlet-body form">
+                            <form role="form">
+                                <div class="form-body">
+                                    <div class="form-group form-md-line-input">
+                                        <input type="text" class="form-control" id="name">
+                                        <label for="marka">Kategori Adı</label>
+                                        <span class="help-block">Kategori Adını Yazınız</span>
+                                    </div>
+                                    
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" data-dismiss="modal" class="btn btn-outline dark">Kapat</button>
+                    <button id="modalkatgunc" class="btn green">Güncelle</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalkulsil" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" style="display: none;">
+
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+            <h4 class="modal-title">Uyarı!</h4>
+        </div>
+        <div class="modal-body">
+            <p> Kategoriyi Silmek istediğinize emin misiniz? </p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn default" data-dismiss="modal" aria-hidden="true">Hayır</button>
+            <button id="silkul" class="btn yellow">Evet</button>
+        </div>
+    </div>
+</div>
+
+<div id="modalbirimsil" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" style="display: none;">
+
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+            <h4 class="modal-title">Uyarı!</h4>
+        </div>
+        <div class="modal-body">
+            <p> Birimi Silmek istediğinize emin misiniz? </p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn default" data-dismiss="modal" aria-hidden="true">Hayır</button>
+            <button id="silbirim" class="btn yellow">Evet</button>
+        </div>
+    </div>
+</div>
+<div id="staticatama1" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false" data-width="20%">
+
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+            <h4 class="modal-title"></h4>
+        </div>
+        <div class="modal-body">
+            <div class="portlet-title text-center">
+                <div class="caption font-red-sunglo">
+                    <i class="icon-settings font-red-sunglo"></i>
+                    <span class="caption-subject bold uppercase">Birim Güncelleme</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="portlet light bordered">
+                        <div class="portlet-body form">
+                            <form role="form">
+                                <div class="form-body">
+                                    <div class="form-group form-md-line-input">
+                                        <input type="text" class="form-control" id="birim">
+                                        <label for="marka">Birim Adı</label>
+                                        <span class="help-block">Birim Adını Yazınız</span>
+                                    </div>
+
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" data-dismiss="modal" class="btn btn-outline dark">Kapat</button>
+                    <button id="modalbirimgunc" class="btn green">Güncelle</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="portlet light bordered">
+            <div class="portlet-title">
+                <div class="caption font-dark">
+                    <i class="icon-settings font-dark"></i>
+                    <span class="caption-subject bold uppercase">Kategori Listesi</span>
+                </div>
+                <div class="tools"> </div>
+            </div>
+            <div class="portlet-body">
+                <div class="table-toolbar">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="btn-group">
+                                <a href="/kabi/YeniKateEkle" id="sample_editable_1_new" class="btn sbold green">
+                                    Yeni Kategori Ekle
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div id="sample_1_wrapper" class="dataTables_wrapper no-footer">
+                    <table class="table table-striped table-bordered table-hover dt-responsive dataTable no-footer dtr-inline collapsed" width="100%" id="sample_3" role="grid" aria-describedby="sample_1_info" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>Kategori Adı</th>
+                                <th>Güncelle</th>
+                                <th>Sil</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.KategoriList)
+                            {
+                                <tr>
+                                    <td>@item.KategoriAdı</td>
+                                    <td width="10%">
+
+                                        <a href="#staticatama" data-toggle="modal" onclick="katGuncelle(@item.ID)" class="btn btn-circle green btn-outline">Güncelle</a>
+                                    </td>
+                                    <td width="10%">
+                                        <a href="#modalkulsil" data-toggle="modal" onclick="katSil(@item.ID)" class="btn btn-circle red btn-outline">Sil</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div><div class="col-md-6">
+        <div class="portlet light bordered">
+            <div class="portlet-title">
+                <div class="caption font-dark">
+                    <i class="icon-settings font-dark"></i>
+                    <span class="caption-subject bold uppercase">Birim Listesi</span>
+                </div>
+                <div class="tools"> </div>
+            </div>
+            <div class="portlet-body">
+                <div class="table-toolbar">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="btn-group">
+                                <a href="/kabi/YeniBirimEkle" id="sample_editable_1_new" class="btn sbold yellow">
+                                    Yeni Birim Ekle
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div id="sample_1_wrapper" class="dataTables_wrapper no-footer">
+                    <table class="table table-striped table-bordered table-hover dt-responsive dataTable no-footer dtr-inline collapsed" width="100%" id="sample_4" role="grid" aria-describedby="sample_1_info" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>Birim Adı</th>
+                                <th>Güncelle</th>
+                                <th>Sil</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.BirimList)
+                            {
+                                <tr>
+                                    <td>@item.BirimAdı</td>
+                                    <td width="10%">
+
+                                        <a href="#staticatama1" data-toggle="modal" onclick="birimGuncelle(@item.ID)" class="btn btn-circle green btn-outline">Güncelle</a>
+                                    </td>
+                                    <td width="10%">
+                                        <a href="#modalbirimsil" data-toggle="modal" onclick="birimSil(@item.ID)" class="btn btn-circle red btn-outline">Sil</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

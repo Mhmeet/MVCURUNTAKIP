@@ -1,0 +1,75 @@
+﻿
+@{
+    ViewBag.Title = "YeniKateEkle";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("#eklekategori").click(function () {
+            var kate = {
+                KategoriAdı: $("#name").val(),
+            }
+            $.ajax({
+                url: "/kabi/yenikateadd",
+                type: "Post",
+                datatype: "json",
+                data: kate,
+                success: function (data) {
+                    if (data == true) {
+                        window.location.href = "/kabi/katebirim";
+
+                    }
+                    else {
+                        alert("Boş yerleri doldurarak tekrar deneyiniz");
+                    }
+                }
+            })
+        })
+    })
+</script>
+<div id="kateklemodali" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" style="display: none;">
+
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+            <h4 class="modal-title">Uyarı!</h4>
+        </div>
+        <div class="modal-body">
+            <p> Kategoriyi Eklemek istediğinize emin misiniz? </p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn default" data-dismiss="modal" aria-hidden="true">Hayır</button>
+            <button id="eklekategori" data-dismiss="modal" class="btn yellow">Evet</button>
+        </div>
+    </div>
+</div>
+<div class="portlet light bordered" style="margin-left: 10%; margin-right: 30%; ">
+    <div class="portlet-title">
+        <div class="caption font-green">
+            <i class="icon-pin font-green"></i>
+            <span class="caption-subject bold uppercase"> Yeni Ürün Ekleme</span>
+        </div>
+
+    </div>
+    <div class="portlet-body form">
+        <form role="form">
+            <div class="form-body">
+                <div class="form-group form-md-line-input">
+                    <input type="text" class="form-control" id="name">
+                    <label for="marka">Kategori Adı </label>
+                    <span class="help-block">Kategori Adını Yazınız</span>
+                </div>
+                
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-actions noborder">
+                            <a href="#kateklemodali" data-toggle="modal" class="btn blue">Ekle</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

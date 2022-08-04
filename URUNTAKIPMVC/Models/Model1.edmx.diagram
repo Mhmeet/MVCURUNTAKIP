@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="5a67c75005cb412c82d9117730cc792f" Name="Diagram1">
+        <EntityTypeShape EntityType="MVCURUNYONETIMModel.Birim" Width="1.5" PointX="0.75" PointY="3.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="MVCURUNYONETIMModel.Dosyalar" Width="1.5" PointX="7.5" PointY="2.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="MVCURUNYONETIMModel.Durum" Width="1.5" PointX="3" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MVCURUNYONETIMModel.Kategori" Width="1.5" PointX="3" PointY="7.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="MVCURUNYONETIMModel.Kullanici" Width="1.5" PointX="3" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MVCURUNYONETIMModel.sysdiagram" Width="1.5" PointX="5.75" PointY="8.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="MVCURUNYONETIMModel.UrunGecmisi" Width="1.5" PointX="7.5" PointY="5.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="MVCURUNYONETIMModel.Urunler" Width="1.5" PointX="5.25" PointY="2.625" IsExpanded="true" />
+        <AssociationConnector Association="MVCURUNYONETIMModel.FK_Kullanici_Birim" ManuallyRouted="false" />
+        <AssociationConnector Association="MVCURUNYONETIMModel.FK_DosyaYolu_Urunler" ManuallyRouted="false" />
+        <AssociationConnector Association="MVCURUNYONETIMModel.FK_Urunler_Durum" ManuallyRouted="false" />
+        <AssociationConnector Association="MVCURUNYONETIMModel.FK_Urunler_Kategori" ManuallyRouted="false" />
+        <AssociationConnector Association="MVCURUNYONETIMModel.FK_Urunler_Kullanici" ManuallyRouted="false" />
+        <AssociationConnector Association="MVCURUNYONETIMModel.FK_UrunGecmisi_Urunler" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

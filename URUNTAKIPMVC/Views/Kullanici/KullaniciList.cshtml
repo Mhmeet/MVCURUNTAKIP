@@ -1,0 +1,232 @@
+﻿@model URUNTAKIPMVC.Models.MultiView
+@{
+    ViewBag.Title = "kullaniciList";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+@*<script type="text/javascript">
+        $(document).ready(function () {
+            $('#sample_11').DataTable({
+                responsive: true
+        });
+        })
+
+    </script>*@
+
+<script type="text/javascript">
+    var kid = 1;
+    var birimid = 1;
+    function kulGuncelle(kullid) {
+
+        kid = kullid;
+
+        $.ajax({
+            url: '/kullanici/KullDetay',
+            type: 'Post',
+            dataType: 'json',
+            data: { id: kid },
+            success: function (data) {
+                var isim = data.Result.AdiSoyadi;
+                birimid = data.Result.BirimID;
+                $("#name").val(isim);
+                $("#birim").val(birimid);
+            },
+            error: function (data) {
+                alert("aaa");
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        $("#birim").change(function () {
+            birimid = $(this).children(":selected").attr("value");
+        });
+
+
+        $('#modalkulgunc').click(function () {
+            var kull = {
+                ID: kid,
+                AdiSoyadi: $("#name").val(),
+                BirimID: $("#birim").val(),
+            }
+            if (kid > 0) {
+                $.ajax({
+                    url: "/kullanici/kullaniciguncelle",
+                    type: "Post",
+                    datatype: "json",
+                    data: kull,
+                    success: function (data) {
+                        if (data == true) {
+                            window.location.reload();
+                        }
+                        else if (data == "Boş") {
+                            alert("Boş ismi değiştirelemez!");
+                        }
+                    }
+                })
+            }
+            else {
+                App.alert({
+                    container: $('#alert_container').val(), // alerts parent container place: 'append', // append or prepent in container type: 'success', // alert's type message: 'Test alert', // alert's message
+                    close: true, // make alert closable reset: false, // close all previouse alerts first focus: true, // auto scroll to the alert after shown closeInSeconds: 10000, // auto close after defined seconds
+                    icon: 'fa fa-check' // put icon class before the message });
+                })
+
+            };
+        });
+    });
+
+
+    function kulSil(kullid) {
+        $('#modalkulsil').click(function () {
+            if (kullid > 0) {
+                $.ajax({
+                    url: "/kullanici/silkull",
+                    type: "Post",
+                    datatype: "json",
+                    data: { id: kullid },
+                    success: function (data) {
+                        if (data == "Var") {
+                            alert("Bu kullanıcıya ait ürün olduğu için silinemez");
+                        }
+                        else if (data == "Boş") {
+                            alert("Boş ismi silinemez");
+                        }
+                        else {
+                            window.location.reload();
+                        }
+                    }
+                })
+            }
+        })
+    }
+
+
+</script>
+<div id="myModal1" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" style="display: none;">
+
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+            <h4 class="modal-title">Uyarı!</h4>
+        </div>
+        <div class="modal-body">
+            <p> Kullaniciyi Silmek istediğinize emin misiniz? </p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn default" data-dismiss="modal" aria-hidden="true">Hayır</button>
+            <button id="modalkulsil" class="btn yellow">Evet</button>
+        </div>
+    </div>
+</div>
+<div id="staticatama" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false" data-width="20%">
+
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+            <h4 class="modal-title"></h4>
+        </div>
+        <div class="modal-body">
+            <div class="portlet-title text-center">
+                <div class="caption font-red-sunglo">
+                    <i class="icon-settings font-red-sunglo"></i>
+                    <span class="caption-subject bold uppercase">Kullanıcı Güncelleme</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="portlet light bordered">
+                        <div class="portlet-body form">
+                            <form role="form">
+                                <div class="form-body">
+                                    <div class="form-group form-md-line-input">
+                                        <input type="text" class="form-control" id="name">
+                                        <label for="marka">Kullanıcı İsim Soyisim</label>
+                                        <span class="help-block">Kullanıcı Adını ve Soyadını Yazınız</span>
+                                    </div>
+                                    <div class="form-group form-md-line-input">
+                                        <select class="form-control" id="birim">
+                                            @foreach (var item in Model.BirimList)
+                                            {
+                                                <option selected value="@item.ID">@item.BirimAdı</option>
+                                            }
+                                        </select>
+                                        <label for="form_control_1">Kullanıcı Birimi</label>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" data-dismiss="modal" class="btn btn-outline dark">Kapat</button>
+                    <button id="modalkulgunc" class="btn green">Güncelle</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="portlet light bordered">
+    <div class="portlet-title">
+        <div class="caption font-blue">
+            <i class="icon-settings font-blue"></i>
+            <span class="caption-subject bold uppercase">Kullanıcı Listesi</span>
+        </div>
+        <div class="tools"> </div>
+    </div>
+    <div class="portlet-body">
+        <div class="table-toolbar">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="btn-group">
+                        <a href="/Kullanici/YeniKullaniciEkle" id="sample_editable_1_new" class="btn sbold red">
+                            Yeni Kullanıcı Ekle
+                            <i class="fa fa-plus"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div id="sample_1_wrapper" class="dataTables_wrapper no-footer">
+            <table class="table table-striped table-bordered table-hover dt-responsive dataTable no-footer dtr-inline collapsed" width="100%" id="sample_1" role="grid" aria-describedby="sample_1_info" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>Adı Soyadı</th>
+                        <th>Birim Adı</th>
+                        <th>Güncelle</th>
+                        <th>Sil</th>
+                        <th>Ürün</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.KullaniciList)
+                    {
+                        <tr>
+                            <td>@item.AdiSoyadi</td>
+                            <td>@item.Birim.BirimAdı</td>
+                            <td class="text-center" width="10%">
+                                <a href="#staticatama" data-toggle="modal" onclick="kulGuncelle(@item.ID)" class="btn btn-circle green btn-outline">Güncelle</a>
+                            </td>
+                            <td class="text-center" width="10%">
+                                <a href="#myModal1" data-toggle="modal" onclick="kulSil(@item.ID)" class="btn btn-circle red btn-outline">Sil</a>
+                            </td>
+                            <td class="text-center" width="10%">
+                                <a href="/kullanici/kullaniciUrunlerr/@item.ID" class="btn btn-circle blue btn-outline">Ürünler</a>
+                            </td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+

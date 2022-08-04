@@ -1,0 +1,495 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="MVCURUNYONETIMModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Birim">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="BirimAdı" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Dosyalar">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UrunID" Type="int" Nullable="false" />
+          <Property Name="DosyaYolu" Type="nvarchar(max)" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Durum">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DurumAdı" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Kategori">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="KategoriAdı" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Kullanici">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AdiSoyadi" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="BirimID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
+        </EntityType>
+        <EntityType Name="UrunGecmisi">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UrunID" Type="int" Nullable="false" />
+          <Property Name="Notu" Type="nvarchar" MaxLength="150" />
+        </EntityType>
+        <EntityType Name="Urunler">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="KullaniciID" Type="int" Nullable="false" />
+          <Property Name="Marka" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Model" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Adet" Type="int" Nullable="false" />
+          <Property Name="SeriNo" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="DurumID" Type="int" Nullable="false" />
+          <Property Name="KategoriID" Type="int" Nullable="false" />
+          <Property Name="Fiyat" Type="int" Nullable="false" />
+          <Property Name="VerilenTarih" Type="datetime" Nullable="false" />
+          <Property Name="AlinanTarih" Type="datetime" Nullable="false" />
+          <Property Name="notlar" Type="nvarchar" MaxLength="150" />
+          <Property Name="atandiMi" Type="bit" Nullable="false" />
+          <Property Name="PDF" Type="bit" />
+        </EntityType>
+        <Association Name="FK_DosyaYolu_Urunler">
+          <End Role="Urunler" Type="Self.Urunler" Multiplicity="1" />
+          <End Role="Dosyalar" Type="Self.Dosyalar" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Urunler">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Dosyalar">
+              <PropertyRef Name="UrunID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Kullanici_Birim">
+          <End Role="Birim" Type="Self.Birim" Multiplicity="1" />
+          <End Role="Kullanici" Type="Self.Kullanici" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Birim">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Kullanici">
+              <PropertyRef Name="BirimID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UrunGecmisi_Urunler">
+          <End Role="Urunler" Type="Self.Urunler" Multiplicity="1" />
+          <End Role="UrunGecmisi" Type="Self.UrunGecmisi" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Urunler">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="UrunGecmisi">
+              <PropertyRef Name="UrunID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Urunler_Durum">
+          <End Role="Durum" Type="Self.Durum" Multiplicity="1" />
+          <End Role="Urunler" Type="Self.Urunler" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Durum">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Urunler">
+              <PropertyRef Name="DurumID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Urunler_Kategori">
+          <End Role="Kategori" Type="Self.Kategori" Multiplicity="1" />
+          <End Role="Urunler" Type="Self.Urunler" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Kategori">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Urunler">
+              <PropertyRef Name="KategoriID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Urunler_Kullanici">
+          <End Role="Kullanici" Type="Self.Kullanici" Multiplicity="1" />
+          <End Role="Urunler" Type="Self.Urunler" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Kullanici">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Urunler">
+              <PropertyRef Name="KullaniciID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="MVCURUNYONETIMModelStoreContainer">
+          <EntitySet Name="Birim" EntityType="Self.Birim" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Dosyalar" EntityType="Self.Dosyalar" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Durum" EntityType="Self.Durum" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Kategori" EntityType="Self.Kategori" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Kullanici" EntityType="Self.Kullanici" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UrunGecmisi" EntityType="Self.UrunGecmisi" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Urunler" EntityType="Self.Urunler" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_DosyaYolu_Urunler" Association="Self.FK_DosyaYolu_Urunler">
+            <End Role="Urunler" EntitySet="Urunler" />
+            <End Role="Dosyalar" EntitySet="Dosyalar" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Kullanici_Birim" Association="Self.FK_Kullanici_Birim">
+            <End Role="Birim" EntitySet="Birim" />
+            <End Role="Kullanici" EntitySet="Kullanici" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UrunGecmisi_Urunler" Association="Self.FK_UrunGecmisi_Urunler">
+            <End Role="Urunler" EntitySet="Urunler" />
+            <End Role="UrunGecmisi" EntitySet="UrunGecmisi" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Urunler_Durum" Association="Self.FK_Urunler_Durum">
+            <End Role="Durum" EntitySet="Durum" />
+            <End Role="Urunler" EntitySet="Urunler" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Urunler_Kategori" Association="Self.FK_Urunler_Kategori">
+            <End Role="Kategori" EntitySet="Kategori" />
+            <End Role="Urunler" EntitySet="Urunler" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Urunler_Kullanici" Association="Self.FK_Urunler_Kullanici">
+            <End Role="Kullanici" EntitySet="Kullanici" />
+            <End Role="Urunler" EntitySet="Urunler" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="MVCURUNYONETIMModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Birim">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="BirimAdı" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Kullanicis" Relationship="Self.FK_Kullanici_Birim" FromRole="Birim" ToRole="Kullanici" />
+        </EntityType>
+        <EntityType Name="Dosyalar">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UrunID" Type="Int32" Nullable="false" />
+          <Property Name="DosyaYolu" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Urunler" Relationship="Self.FK_DosyaYolu_Urunler" FromRole="Dosyalar" ToRole="Urunler" />
+        </EntityType>
+        <EntityType Name="Durum">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DurumAdı" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Urunlers" Relationship="Self.FK_Urunler_Durum" FromRole="Durum" ToRole="Urunler" />
+        </EntityType>
+        <EntityType Name="Kategori">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="KategoriAdı" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Urunlers" Relationship="Self.FK_Urunler_Kategori" FromRole="Kategori" ToRole="Urunler" />
+        </EntityType>
+        <EntityType Name="Kullanici">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AdiSoyadi" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="BirimID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Birim" Relationship="Self.FK_Kullanici_Birim" FromRole="Kullanici" ToRole="Birim" />
+          <NavigationProperty Name="Urunlers" Relationship="Self.FK_Urunler_Kullanici" FromRole="Kullanici" ToRole="Urunler" />
+        </EntityType>
+        <EntityType Name="sysdiagram">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="UrunGecmisi">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UrunID" Type="Int32" Nullable="false" />
+          <Property Name="Notu" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Urunler" Relationship="Self.FK_UrunGecmisi_Urunler" FromRole="UrunGecmisi" ToRole="Urunler" />
+        </EntityType>
+        <EntityType Name="Urunler">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="KullaniciID" Type="Int32" Nullable="false" />
+          <Property Name="Marka" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Model" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="SeriNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DurumID" Type="Int32" Nullable="false" />
+          <Property Name="KategoriID" Type="Int32" Nullable="false" />
+          <Property Name="Fiyat" Type="Int32" Nullable="false" />
+          <Property Name="VerilenTarih" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="AlinanTarih" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="notlar" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="atandiMi" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Dosyalars" Relationship="Self.FK_DosyaYolu_Urunler" FromRole="Urunler" ToRole="Dosyalar" />
+          <NavigationProperty Name="Durum" Relationship="Self.FK_Urunler_Durum" FromRole="Urunler" ToRole="Durum" />
+          <NavigationProperty Name="Kategori" Relationship="Self.FK_Urunler_Kategori" FromRole="Urunler" ToRole="Kategori" />
+          <NavigationProperty Name="Kullanici" Relationship="Self.FK_Urunler_Kullanici" FromRole="Urunler" ToRole="Kullanici" />
+          <NavigationProperty Name="UrunGecmisis" Relationship="Self.FK_UrunGecmisi_Urunler" FromRole="Urunler" ToRole="UrunGecmisi" />
+          <Property Name="Adet" Type="Int32" Nullable="false" />
+          <Property Name="PDF" Type="Boolean" />
+        </EntityType>
+        <Association Name="FK_Kullanici_Birim">
+          <End Role="Birim" Type="Self.Birim" Multiplicity="1" />
+          <End Role="Kullanici" Type="Self.Kullanici" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Birim">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Kullanici">
+              <PropertyRef Name="BirimID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DosyaYolu_Urunler">
+          <End Role="Urunler" Type="Self.Urunler" Multiplicity="1" />
+          <End Role="Dosyalar" Type="Self.Dosyalar" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Urunler">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Dosyalar">
+              <PropertyRef Name="UrunID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Urunler_Durum">
+          <End Role="Durum" Type="Self.Durum" Multiplicity="1" />
+          <End Role="Urunler" Type="Self.Urunler" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Durum">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Urunler">
+              <PropertyRef Name="DurumID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Urunler_Kategori">
+          <End Role="Kategori" Type="Self.Kategori" Multiplicity="1" />
+          <End Role="Urunler" Type="Self.Urunler" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Kategori">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Urunler">
+              <PropertyRef Name="KategoriID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Urunler_Kullanici">
+          <End Role="Kullanici" Type="Self.Kullanici" Multiplicity="1" />
+          <End Role="Urunler" Type="Self.Urunler" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Kullanici">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Urunler">
+              <PropertyRef Name="KullaniciID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UrunGecmisi_Urunler">
+          <End Role="Urunler" Type="Self.Urunler" Multiplicity="1" />
+          <End Role="UrunGecmisi" Type="Self.UrunGecmisi" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Urunler">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="UrunGecmisi">
+              <PropertyRef Name="UrunID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="MVCURUNYONETIMEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Birims" EntityType="Self.Birim" />
+          <EntitySet Name="Dosyalars" EntityType="Self.Dosyalar" />
+          <EntitySet Name="Durums" EntityType="Self.Durum" />
+          <EntitySet Name="Kategoris" EntityType="Self.Kategori" />
+          <EntitySet Name="Kullanicis" EntityType="Self.Kullanici" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
+          <EntitySet Name="UrunGecmisis" EntityType="Self.UrunGecmisi" />
+          <EntitySet Name="Urunlers" EntityType="Self.Urunler" />
+          <AssociationSet Name="FK_Kullanici_Birim" Association="Self.FK_Kullanici_Birim">
+            <End Role="Birim" EntitySet="Birims" />
+            <End Role="Kullanici" EntitySet="Kullanicis" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DosyaYolu_Urunler" Association="Self.FK_DosyaYolu_Urunler">
+            <End Role="Urunler" EntitySet="Urunlers" />
+            <End Role="Dosyalar" EntitySet="Dosyalars" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Urunler_Durum" Association="Self.FK_Urunler_Durum">
+            <End Role="Durum" EntitySet="Durums" />
+            <End Role="Urunler" EntitySet="Urunlers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Urunler_Kategori" Association="Self.FK_Urunler_Kategori">
+            <End Role="Kategori" EntitySet="Kategoris" />
+            <End Role="Urunler" EntitySet="Urunlers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Urunler_Kullanici" Association="Self.FK_Urunler_Kullanici">
+            <End Role="Kullanici" EntitySet="Kullanicis" />
+            <End Role="Urunler" EntitySet="Urunlers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UrunGecmisi_Urunler" Association="Self.FK_UrunGecmisi_Urunler">
+            <End Role="Urunler" EntitySet="Urunlers" />
+            <End Role="UrunGecmisi" EntitySet="UrunGecmisis" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="MVCURUNYONETIMModelStoreContainer" CdmEntityContainer="MVCURUNYONETIMEntities">
+          <EntitySetMapping Name="Birims">
+            <EntityTypeMapping TypeName="MVCURUNYONETIMModel.Birim">
+              <MappingFragment StoreEntitySet="Birim">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="BirimAdı" ColumnName="BirimAdı" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Dosyalars">
+            <EntityTypeMapping TypeName="MVCURUNYONETIMModel.Dosyalar">
+              <MappingFragment StoreEntitySet="Dosyalar">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="UrunID" ColumnName="UrunID" />
+                <ScalarProperty Name="DosyaYolu" ColumnName="DosyaYolu" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Durums">
+            <EntityTypeMapping TypeName="MVCURUNYONETIMModel.Durum">
+              <MappingFragment StoreEntitySet="Durum">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="DurumAdı" ColumnName="DurumAdı" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Kategoris">
+            <EntityTypeMapping TypeName="MVCURUNYONETIMModel.Kategori">
+              <MappingFragment StoreEntitySet="Kategori">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="KategoriAdı" ColumnName="KategoriAdı" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Kullanicis">
+            <EntityTypeMapping TypeName="MVCURUNYONETIMModel.Kullanici">
+              <MappingFragment StoreEntitySet="Kullanici">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="AdiSoyadi" ColumnName="AdiSoyadi" />
+                <ScalarProperty Name="BirimID" ColumnName="BirimID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="MVCURUNYONETIMModel.sysdiagram">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="definition" ColumnName="definition" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UrunGecmisis">
+            <EntityTypeMapping TypeName="MVCURUNYONETIMModel.UrunGecmisi">
+              <MappingFragment StoreEntitySet="UrunGecmisi">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="UrunID" ColumnName="UrunID" />
+                <ScalarProperty Name="Notu" ColumnName="Notu" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Urunlers">
+            <EntityTypeMapping TypeName="MVCURUNYONETIMModel.Urunler">
+              <MappingFragment StoreEntitySet="Urunler">
+                <ScalarProperty Name="PDF" ColumnName="PDF" />
+                <ScalarProperty Name="Adet" ColumnName="Adet" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="KullaniciID" ColumnName="KullaniciID" />
+                <ScalarProperty Name="Marka" ColumnName="Marka" />
+                <ScalarProperty Name="Model" ColumnName="Model" />
+                <ScalarProperty Name="SeriNo" ColumnName="SeriNo" />
+                <ScalarProperty Name="DurumID" ColumnName="DurumID" />
+                <ScalarProperty Name="KategoriID" ColumnName="KategoriID" />
+                <ScalarProperty Name="Fiyat" ColumnName="Fiyat" />
+                <ScalarProperty Name="VerilenTarih" ColumnName="VerilenTarih" />
+                <ScalarProperty Name="AlinanTarih" ColumnName="AlinanTarih" />
+                <ScalarProperty Name="notlar" ColumnName="notlar" />
+                <ScalarProperty Name="atandiMi" ColumnName="atandiMi" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
